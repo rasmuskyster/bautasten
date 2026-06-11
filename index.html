@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Savage Army + Sandbag</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#15110c; --ink:#ece3d4; --muted:#a99b86; --dim:#7a6e5d;
+  --line:rgba(207,154,82,0.14); --line2:rgba(207,154,82,0.28);
+  --surface:#1c1610; --surface2:#241c14;
+  --bronze:#cf9a52; --bronze2:#e6bc7a;
+  --a:#a9c47a; --b:#e3a85d; --c:#8eacd4;
+  --a-dim:rgba(169,196,122,0.14); --b-dim:rgba(227,168,93,0.14); --c-dim:rgba(142,172,212,0.14);
+  --ok:#a9c47a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{min-height:100%}
+body{
+  min-height:100%;
+  background:var(--bg); color:var(--ink);
+  font-family:'Sora',system-ui,sans-serif; line-height:1.55; font-weight:400;
+  background-image:radial-gradient(ellipse 90% 40% at 50% -5%, rgba(207,154,82,0.10), transparent 60%);
+  background-repeat:no-repeat;
+  padding-bottom:calc(110px + env(safe-area-inset-bottom));
+}
+.app{max-width:560px;margin:0 auto;padding:0 16px}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+/* ===== header ===== */
+.hdr{padding:22px 2px 14px;display:flex;justify-content:space-between;align-items:center}
+.hdr .t{font-family:'Cinzel',serif;font-weight:700;font-size:19px;letter-spacing:0.05em}
+.hdr .t span{color:var(--bronze)}
+.hdr .phase{font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bronze);
+  border:1px solid var(--line2);border-radius:100px;padding:5px 12px}
+
+/* ===== views ===== */
+.view{display:none;animation:fade .25s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.view{animation:none}}
+
+/* ===== today: hero ===== */
+.hero{padding:10px 2px 18px;display:flex;align-items:center;gap:18px}
+.ring{position:relative;width:84px;height:84px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .num b{font-family:'Cinzel',serif;font-size:21px;font-weight:700;line-height:1}
+.ring .num i{font-style:normal;font-size:9px;letter-spacing:0.12em;color:var(--dim);text-transform:uppercase;margin-top:3px}
+.hero .hx h2{font-family:'Cinzel',serif;font-weight:600;font-size:26px;letter-spacing:0.02em;line-height:1.1}
+.hero .hx .sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.hero .hx .daylab{font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
+.daynav{display:flex;gap:8px;margin-left:auto;flex:none}
+.daynav button{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:16px}
+.daynav button:active{background:var(--surface2)}
+
+/* ===== blocks ===== */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line2)}
+.card.k-a::before{background:var(--a)} .card.k-b::before{background:var(--b)} .card.k-c::before{background:var(--c)}
+.card.k-kb::before{background:var(--bronze)}
+.blkh{display:flex;align-items:center;gap:9px;margin-bottom:4px;flex-wrap:wrap}
+.tag{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:7px}
+.tag.a{background:var(--a-dim);color:var(--a)} .tag.b{background:var(--b-dim);color:var(--b)} .tag.c{background:var(--c-dim);color:var(--c)}
+.tag.kb{border:1px solid var(--line2);color:var(--bronze)}
+.blkh .bs{font-size:12px;color:var(--muted)}
+.phasehint{font-size:11.5px;color:var(--dim);margin:2px 0 10px}
+
+.ex{padding:11px 0;border-top:1px solid var(--line)}
+.ex:first-of-type{border-top:none}
+.exh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.exh .n{font-size:14.5px;font-weight:400}
+.exh .d{font-size:12px;color:var(--muted);white-space:nowrap}
+.kgpill{display:inline-block;font-size:10.5px;font-weight:600;color:var(--bronze2);border:1px solid var(--line2);
+  border-radius:6px;padding:1px 7px;margin-left:7px;vertical-align:1px}
+
+/* set dots */
+.sets{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap}
+.setb{width:44px;height:44px;border:1px solid var(--line2);border-radius:12px;color:var(--dim);
+  font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.setb.done{background:var(--a-dim);border-color:var(--a);color:var(--a)}
+.setb:active{transform:scale(0.93)}
+
+/* rep counter */
+.reps{display:flex;align-items:center;gap:10px;margin-top:10px}
+.reps .bar{flex:1;height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.reps .fill{height:100%;border-radius:4px;background:var(--bronze);transition:width .2s}
+.reps .cnt{font-size:13px;min-width:62px;text-align:right;color:var(--muted)}
+.reps .cnt b{color:var(--ink);font-weight:600}
+.repbtns{display:flex;gap:8px;margin-top:9px}
+.repbtns button{flex:1;height:40px;border:1px solid var(--line2);border-radius:11px;font-size:13px;font-weight:500;color:var(--ink)}
+.repbtns button:active{background:var(--surface2);transform:scale(0.98)}
+.repbtns .undo{flex:0 0 52px;color:var(--dim)}
+
+/* complete day */
+.bigbtn{width:100%;height:52px;border-radius:14px;font-family:'Cinzel',serif;font-weight:600;font-size:15px;
+  letter-spacing:0.08em;border:1px solid var(--line2);color:var(--bronze2);margin:4px 0 26px;transition:all .2s}
+.bigbtn.ready{background:var(--bronze);color:#1a1208;border-color:var(--bronze)}
+.bigbtn.was{background:var(--a-dim);color:var(--a);border-color:var(--a)}
+.bigbtn:active{transform:scale(0.98)}
+
+/* ===== days grid ===== */
+.weekh{display:flex;align-items:center;gap:12px;margin:18px 2px 10px}
+.weekh .wn{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.18em;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.weekh .wl{flex:1;height:1px;background:var(--line)}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.dcell{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:11px 11px 10px;text-align:left;position:relative;color:var(--ink)}
+.dcell .dn{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim)}
+.dcell .nm{font-family:'Cinzel',serif;font-weight:600;font-size:12.5px;margin-top:2px;letter-spacing:0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dcell .dot{position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%}
+.dcell.cur{border-color:var(--bronze)}
+.dcell.done{opacity:0.55}
+.dcell.done .nm{text-decoration:line-through;text-decoration-color:var(--dim)}
+.dcell.done::after{content:"✓";position:absolute;bottom:8px;right:10px;color:var(--ok);font-size:12px}
+.dot.sa{background:var(--a)} .dot.sb{background:var(--b)} .dot.sc{background:var(--c)}
+
+/* ===== guide ===== */
+.gsec{font-family:'Cinzel',serif;font-weight:600;font-size:16px;letter-spacing:0.04em;margin:22px 2px 10px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.gcard p{font-size:13px;color:var(--muted);line-height:1.6}
+.gcard b{color:var(--ink);font-weight:500}
+table.wt{width:100%;border-collapse:collapse;font-size:12.5px}
+table.wt th{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);font-weight:500;text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}
+table.wt th:first-child{text-align:left}
+table.wt td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right;color:var(--muted)}
+table.wt td:first-child{text-align:left;color:var(--ink)}
+table.wt tr:last-child td{border-bottom:none}
+table.wt td.hv{color:var(--bronze2);font-weight:600}
+.phrow{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.phrow:last-child{border-bottom:none}
+.phrow .pk{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.05em;color:var(--bronze2);min-width:108px;font-weight:600}
+.phrow.now .pk::after{content:" ●";color:var(--a);font-size:9px}
+.phrow p{color:var(--muted)}
+.resetbtn{width:100%;height:44px;border:1px solid rgba(214,90,72,0.4);border-radius:12px;color:#e08b6f;font-size:13px;margin:14px 0 30px}
+.vid{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.vid:last-child{border-bottom:none}
+.vid .vn{font-size:13.5px}
+.vid .vp{flex:none;font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--bronze2);border:1px solid var(--line2);border-radius:8px;padding:5px 11px;display:flex;align-items:center;gap:5px}
+.vid .vp.inprog{color:var(--c);border-color:rgba(142,172,212,0.4)}
+
+/* weight input + session log + stats */
+.wtag{font-size:10px;font-weight:600;letter-spacing:0.04em;padding:2px 8px;border-radius:6px;margin-left:8px;vertical-align:1px}
+.kgbox{display:flex;align-items:center;gap:4px;border:1px solid var(--line2);border-radius:11px;padding:0 10px;height:40px;flex:0 0 auto}
+.kgbox input{width:38px;background:none;border:none;outline:none;color:var(--ink);font-size:14px;font-weight:600;text-align:right;font-family:inherit;-moz-appearance:textfield}
+.kgbox input::-webkit-outer-spin-button,.kgbox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.kgbox .u{font-size:11px;color:var(--dim)}
+.card.k-log::before{background:var(--dim)}
+.logrow{display:flex;gap:10px;margin-top:10px}
+.logf{flex:1;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surface2)}
+.logf label{display:block;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
+.logf .in{display:flex;align-items:baseline;gap:5px}
+.logf input{width:100%;background:none;border:none;outline:none;color:var(--ink);font-size:18px;font-weight:600;font-family:'Cinzel',serif}
+.logf .u{font-size:11px;color:var(--dim)}
+.statbar{display:flex;gap:9px;margin:4px 0 6px}
+.stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 6px;text-align:center}
+.stat b{font-family:'Cinzel',serif;font-size:17px;font-weight:700;display:block}
+.stat span{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim)}
+
+/* ===== timer bar ===== */
+.timer{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));display:none;justify-content:center;pointer-events:none;z-index:40}
+.timer.on{display:flex}
+.timer .inner{pointer-events:auto;display:flex;align-items:center;gap:14px;background:var(--surface2);
+  border:1px solid var(--line2);border-radius:100px;padding:10px 12px 10px 20px;margin:0 16px 10px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);min-width:240px;justify-content:space-between}
+.timer .tt{font-family:'Cinzel',serif;font-weight:700;font-size:24px;letter-spacing:0.04em;min-width:74px;font-variant-numeric:tabular-nums}
+.timer .tl{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim)}
+.timer .skip{border:1px solid var(--line2);border-radius:100px;padding:8px 16px;font-size:12px;color:var(--muted)}
+.timer.zero .tt{color:var(--a)}
+
+/* ===== nav ===== */
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(21,17,12,0.92);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;padding:11px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim)}
+.nav button.on{color:var(--bronze2)}
+.nav .ic{font-size:18px;line-height:1}
+.nav .lb{font-size:10px;letter-spacing:0.1em;text-transform:uppercase}
+
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface2);
+  border:1px solid var(--line2);border-radius:100px;padding:10px 22px;font-size:13px;z-index:60;transition:transform .3s;color:var(--ink)}
+.toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hdr">
+    <div class="t">SAVAGE <span>+</span> SANDBAG</div>
+    <div class="phase" id="phaseChip">—</div>
+  </header>
+
+  <!-- TODAY -->
+  <section class="view on" id="v-today">
+    <div class="hero">
+      <div class="ring">
+        <svg width="84" height="84" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="37" fill="none" stroke="rgba(207,154,82,0.15)" stroke-width="5"/>
+          <circle id="ringFg" cx="42" cy="42" r="37" fill="none" stroke="#cf9a52" stroke-width="5"
+            stroke-linecap="round" stroke-dasharray="232.5" stroke-dashoffset="232.5"/>
+        </svg>
+        <div class="num"><b id="ringNum">0</b><i>of 30</i></div>
+      </div>
+      <div class="hx">
+        <div class="daylab" id="dayLab">Day 01</div>
+        <h2 id="dayName">THOR</h2>
+        <div class="sub" id="daySub"></div>
+      </div>
+      <div class="daynav">
+        <button id="prevDay" aria-label="Previous day">‹</button>
+        <button id="nextDay" aria-label="Next day">›</button>
+      </div>
+    </div>
+
+    <div id="sbCard"></div>
+    <div id="kbCard"></div>
+    <div id="logCard"></div>
+    <button class="bigbtn" id="doneBtn">MARK DAY COMPLETE</button>
+  </section>
+
+  <!-- DAYS -->
+  <section class="view" id="v-days"><div id="daysWrap"></div><div style="height:24px"></div></section>
+
+  <!-- GUIDE -->
+  <section class="view" id="v-guide">
+    <div class="gsec">Kettlebell weight key</div>
+    <div class="gcard"><p style="margin-bottom:10px">Suggested starting points. Set your own kg on any movement in the Today view — it's remembered per movement and intensity across all 30 days.</p><table class="wt" id="wtTable"></table></div>
+    <div class="gsec">Sandbag protocol</div>
+    <div class="gcard"><p><b>One lift, then its carry, then the bells.</b> 90 s rest between lift sets, 60 s between carries — tap a set and the timer starts itself. The bag works in three positions — bearhug, lap, shoulder. Session A runs deadlift + row through day 18, then graduates to the shouldered squat.</p></div>
+    <div class="gcard"><p><b>The valve.</b> Poor sleep or heavy legs? Cut the carry to one set or skip it. The lift is the priority; the carry comes off first.</p></div>
+    <div class="gcard"><p><b>Variations (same sets, swap when you want variety):</b> bearhug reverse lunge as a squat-day alternative (4 × 3 per side) · sandbag bent-over row as an extra pull (3 × 6–8). Skip slams — the Dual-Ply isn't built for them — and high-rep hang cleans, which don't work on a handleless 60 kg bag.</p></div>
+    <div class="gsec">Progression</div>
+    <div class="gcard" id="phaseList"></div>
+    <div class="gsec">Technique videos</div>
+    <div class="gcard"><p style="margin-bottom:10px">Richard Love's demos for the sandbag movements. Best-guess pairing from the program PDF — if a clip doesn't match its label, let me know.</p><div id="vidList"></div></div>
+    <div class="gsec">Reading the signals</div>
+    <div class="gcard"><p>The trimmed kettlebell reps should feel <b>fast and powerful</b>. If swings turn sluggish across sessions, trim sandbag volume before kettlebell volume. Arriving sore? Pull the carry first. Heavy ground-to-shoulder days (C) deliberately avoid swings and lawn mowers — keep that pairing if you reorder.</p></div>
+    <button class="resetbtn" id="resetBtn">Reset all progress</button>
+  </section>
+
+</div>
+
+<div class="timer" id="timerBar">
+  <div class="inner">
+    <div><div class="tt" id="timerNum">1:30</div><div class="tl" id="timerLab">Rest</div></div>
+    <button class="skip" id="timerSkip">Skip</button>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="on" data-v="today"><span class="ic">⚔</span><span class="lb">Today</span></button>
+  <button data-v="days"><span class="ic">▦</span><span class="lb">Days</span></button>
+  <button data-v="guide"><span class="ic">✦</span><span class="lb">Guide</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+const SB = {
+  B:{name:'Loaded squat', ex:[
+    {n:'Bearhug squat', d:'4 × 5 · 60 kg', sets:4, rest:90},
+    {n:'Shouldered carry', d:'20 m per side × 2', sets:4, rest:60, lab:['L1','R1','L2','R2']}]},
+  C:{name:'Heavy load', ex:[
+    {n:'Ground-to-shoulder', d:'4 × 3 per side · 60 kg', sets:4, rest:90},
+    {n:'Bearhug carry', d:'2 × 20 m', sets:2, rest:60}]}
+};
+function getSB(sess, day){
+  if(sess!=='A') return SB[sess];
+  return day>=19
+    ? {name:'Loaded squat', ex:[
+        {n:'Shouldered squat', d:'4 × 2–3 per side · 60 kg', sets:4, rest:90},
+        {n:'Bearhug carry', d:'2 × 20 m', sets:2, rest:60}]}
+    : {name:'Hinge & pull', ex:[
+        {n:'Deadlift + bent-over row', d:'4 × (5 + 5) · 60 kg', sets:4, rest:90},
+        {n:'Bearhug carry', d:'2 × 20 m', sets:2, rest:60}]};
+}
+const KG = {
+  'Kettlebell swings':[24,28,32],'Full-stop swings':[24,28,32],'Tactical cleans':[16,20,24],
+  'Rotational cleans':[20,24,28],'Side swing to rack':[20,24,28],'Side swing to snatch':[16,20,24],
+  'Side swing to thruster':[16,20,24],'Kettlebell rows':[24,28,32],'Lawn mower starters':[20,24,28],
+  'Push press':[16,20,24],'Punch out to press':[12,16,20],'Power punches':[12,16,20],
+  'Figure 8s':[16,20,24],'Chop ups':[16,20,24]};
+const WI = {L:0,M:1,H:2};
+const DAYS = [
+[1,'THOR','A',[['Kettlebell swings',60,'M'],['Tactical cleans',40,'M']]],
+[2,'ODIN','B',[['Full-stop swings',55,'L'],['Lawn mower starters',45,'H']]],
+[3,'LOKI','C',[['Push press',45,'L'],['Chop ups',55,'L']]],
+[4,'FREYJA','A',[['Side swing to thruster',55,'H'],['Punch out to press',45,'L']]],
+[5,'BALDR','B',[['Tactical cleans',55,'H'],['Kettlebell swings',55,'L']]],
+[6,'HEIMDALL','C',[['Kettlebell rows',50,'H'],['Side swing to snatch',45,'L']]],
+[7,'TYR','A',[['Kettlebell swings',65,'H'],['Tactical cleans',40,'H']]],
+[8,'NJORD','B',[['Full-stop swings',60,'L'],['Lawn mower starters',45,'L']]],
+[9,'FRIGG','C',[['Kettlebell rows',55,'H'],['Side swing to snatch',50,'L']]],
+[10,'SIF','A',[['Kettlebell swings',65,'H'],['Side swing to rack',35,'L']]],
+[11,'HRIST','B',[['Kettlebell swings',60,'H'],['Tactical cleans',50,'H']]],
+[12,'MIST','C',[['Side swing to snatch',50,'H'],['Chop ups',50,'L']]],
+[13,'SKULD','C',[['Kettlebell rows',50,'H'],['Side swing to thruster',45,'H']]],
+[14,'HLÖKK','A',[['Full-stop swings',55,'H'],['Rotational cleans',45,'H']]],
+[15,'GÖNDUL','B',[['Kettlebell swings',65,'H'],['Figure 8s',40,'L']]],
+[16,'GEIRÖNUL','C',[['Kettlebell rows',50,'H'],['Side swing to snatch',45,'H']]],
+[17,'RANDGRÍÐR','A',[['Side swing to thruster',50,'H'],['Figure 8s',45,'L']]],
+[18,'HERFJÖTUR','B',[['Full-stop swings',60,'L'],['Tactical cleans',45,'H']]],
+[19,'RÓTA','C',[['Kettlebell rows',50,'H'],['Side swing to snatch',45,'L']]],
+[20,'SKÖGUL','A',[['Kettlebell swings',60,'H'],['Lawn mower starters',50,'H']]],
+[21,'MIDGARD','B',[['Kettlebell swings',60,'H'],['Side swing to rack',50,'H']]],
+[22,'ASGARD','A',[['Full-stop swings',55,'H'],['Tactical cleans',50,'H']]],
+[23,'VANAHEIM','B',[['Kettlebell swings',65,'H'],['Power punches',40,'L']]],
+[24,'JOTUNHEIM','C',[['Kettlebell rows',50,'H'],['Side swing to snatch',45,'L']]],
+[25,'SVARTALFHEIM','A',[['Lawn mower starters',55,'H'],['Side swing to thruster',50,'H']]],
+[26,'ALFHEIM','B',[['Kettlebell swings',60,'H'],['Side swing to snatch',50,'L']]],
+[27,'NIFLHEIM','C',[['Kettlebell rows',50,'H'],['Side swing to rack',45,'H']]],
+[28,'MUSPELHEIM','A',[['Kettlebell swings',60,'H'],['Lawn mower starters',50,'H']]],
+[29,'HELHEIM','C',[['Kettlebell rows',55,'H'],['Side swing to thruster',45,'H']]],
+[30,'VALHALLA','B',[['Kettlebell swings',65,'H'],['Lawn mower starters',45,'H']]]];
+const VIDS = [
+  ['Deadlift','https://vimeo.com/963162842/1cb1942ace',1],
+  ['Bent-over row','https://vimeo.com/963162974/3fbe6b98e8',1],
+  ['Bearhug squat','https://vimeo.com/963162174/3aa6273300',1],
+  ['Reverse lunge','https://vimeo.com/963162364/e96344b177',0],
+  ['Shouldered squat (offset)','https://vimeo.com/963162652/b8a08390cc',1],
+  ['Kang squat','https://vimeo.com/963163262/b007196dee',0],
+  ['Over the shoulder / ground-to-shoulder','https://vimeo.com/963163424/0761eeb0ff',1],
+  ['Hang clean','https://vimeo.com/963162524/ba497d52a3',0],
+  ['Sandbag slam','https://vimeo.com/963293833/c3f7679da8',0]
+];
+const PHASES = [
+  ['Foundation','Days 1–6','3 sets on the lift, conservative reps. Own the positions and the bracing.',1,6],
+  ['Build','Days 7–12','Build to 4 sets at full reps. 90 s rest. Carries to 20 m.',7,12],
+  ['Accumulate','Days 13–18','Add a rep per set; add a fifth set on the lift where form holds.',13,18],
+  ['Intensify','Days 19–30','Shouldered squats enter Session A. Pauses at depth, slow eccentrics, longer carries.',19,30]];
+
+/* ============ STATE ============ */
+const KEY='savage-v1';
+let S={cur:1, done:[], prog:{}, weights:{}};   // prog[day] = {sb:{exIdx:[bools]}, kb:{moveIdx:reps}, time, kcal} · weights['Movement|TAG'] = kg
+let saveT=null;
+const hasClaudeStore = typeof window.storage !== 'undefined';
+const hasLocal = (()=>{ try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); return true; }catch(e){ return false; } })();
+
+async function load(){
+  if(hasClaudeStore){
+    try{
+      const r = await window.storage.get(KEY);
+      if(r && r.value){ const v = JSON.parse(r.value); if(v && v.cur){ S = v; return; } }
+    }catch(e){ /* first run — no key yet */ }
+  }
+  if(hasLocal){
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(raw){ const v = JSON.parse(raw); if(v && v.cur) S = v; }
+    }catch(e){}
+  }
+}
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(async ()=>{
+    if(hasClaudeStore){
+      try{ await window.storage.set(KEY, JSON.stringify(S)); }
+      catch(e){ console.error('save failed', e); }
+    }
+    if(hasLocal){
+      try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+    }
+  }, 400);
+}
+function dp(d){
+  if(!S.prog[d]) S.prog[d] = {sb:{}, kb:{}};
+  return S.prog[d];
+}
+
+/* ============ HELPERS ============ */
+const $=id=>document.getElementById(id);
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'), 2200);
+}
+function phaseOf(d){ return PHASES.find(p=>d>=p[3]&&d<=p[4]); }
+function vib(p){ if(navigator.vibrate) navigator.vibrate(p); }
+function beep(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=660; g.gain.setValueAtTime(0.25,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);
+    o.start(); o.stop(ctx.currentTime+0.5);
+  }catch(e){}
+}
+
+/* ============ TIMER ============ */
+let timerIv=null, timerEnd=0;
+function startTimer(sec,label){
+  clearInterval(timerIv);
+  timerEnd = Date.now()+sec*1000;
+  $('timerLab').textContent = label;
+  $('timerBar').classList.add('on');
+  $('timerBar').classList.remove('zero');
+  tick();
+  timerIv = setInterval(tick, 250);
+}
+function tick(){
+  const left = Math.max(0, Math.ceil((timerEnd-Date.now())/1000));
+  $('timerNum').textContent = Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+  if(left<=0){
+    clearInterval(timerIv);
+    $('timerBar').classList.add('zero');
+    $('timerNum').textContent='GO';
+    vib([200,100,200]); beep();
+    setTimeout(()=>$('timerBar').classList.remove('on'), 2500);
+  }
+}
+$('timerSkip').onclick=()=>{ clearInterval(timerIv); $('timerBar').classList.remove('on'); };
+
+/* ============ RENDER: TODAY ============ */
+function renderToday(){
+  const [num,name,sess,moves] = DAYS[S.cur-1];
+  const sbDef = getSB(sess, num);
+  const ph = phaseOf(num);
+  const p = dp(num);
+  const isDone = S.done.includes(num);
+
+  $('dayLab').textContent = 'Day '+String(num).padStart(2,'0')+' · Week '+Math.ceil(num/3);
+  $('dayName').textContent = name;
+  $('daySub').textContent = 'Sandbag '+sess+' · '+sbDef.name+' → kettlebells';
+  $('phaseChip').textContent = ph[0];
+
+  /* ring */
+  const frac = S.done.length/30, C=232.5;
+  $('ringFg').style.strokeDashoffset = (C*(1-frac)).toFixed(1);
+  $('ringNum').textContent = S.done.length;
+
+  /* sandbag card */
+  let h = '<div class="card k-'+sess.toLowerCase()+'">';
+  h += '<div class="blkh"><span class="tag '+sess.toLowerCase()+'">Sandbag '+sess+'</span><span class="bs">'+sbDef.name+' · 60 kg</span></div>';
+  h += '<div class="phasehint">'+ph[0]+': '+ph[2]+'</div>';
+  sbDef.ex.forEach((ex,xi)=>{
+    const st = p.sb[xi] || [];
+    h += '<div class="ex"><div class="exh"><span class="n">'+ex.n+'</span><span class="d">'+ex.d+'</span></div><div class="sets">';
+    for(let i=0;i<ex.sets;i++){
+      const on = !!st[i];
+      const lab = ex.lab ? ex.lab[i] : 'S'+(i+1);
+      h += '<button class="setb'+(on?' done':'')+'" data-sb="'+xi+'-'+i+'" data-rest="'+ex.rest+'">'+(on?'✓':lab)+'</button>';
+    }
+    h += '</div></div>';
+  });
+  h += '</div>';
+  $('sbCard').innerHTML = h;
+
+  /* kb card */
+  let k = '<div class="card k-kb"><div class="blkh"><span class="tag kb">Kettlebell</span><span class="bs">'+
+          moves.reduce((a,m)=>a+m[1],0)+' reps · hit briskly</span></div>';
+  moves.forEach((m,mi)=>{
+    const done = p.kb[mi]||0, tgt=m[1], tag=m[2];
+    const wkey = m[0]+'|'+tag;
+    const kg = S.weights[wkey] ?? KG[m[0]][WI[tag]];
+    const pct = Math.min(100, Math.round(done/tgt*100));
+    k += '<div class="ex"><div class="exh"><span class="n">'+m[0]+
+         '<span class="wtag wt-'+tag.toLowerCase()+'">'+tag+'</span></span><span class="d">'+tgt+' reps</span></div>'+
+         '<div class="reps"><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div>'+
+         '<div class="cnt"><b>'+done+'</b> / '+tgt+'</div></div>'+
+         '<div class="repbtns"><div class="kgbox"><input type="number" inputmode="decimal" step="1" min="1" max="99" data-w="'+wkey+'" value="'+kg+'" aria-label="Weight in kg"><span class="u">kg</span></div>'+
+         '<button data-kb="'+mi+'" data-add="5">+5</button>'+
+         '<button data-kb="'+mi+'" data-add="10">+10</button>'+
+         '<button class="undo" data-kb="'+mi+'" data-add="-5">−5</button></div></div>';
+  });
+  k += '</div>';
+  $('kbCard').innerHTML = k;
+
+  /* session log */
+  $('logCard').innerHTML =
+    '<div class="card k-log"><div class="blkh"><span class="tag kb">Session log</span><span class="bs">fill after training</span></div>'+
+    '<div class="logrow">'+
+    '<div class="logf"><label>Duration</label><div class="in"><input type="number" inputmode="numeric" min="0" max="999" id="logTime" placeholder="–" value="'+(p.time||'')+'"><span class="u">min</span></div></div>'+
+    '<div class="logf"><label>Burned</label><div class="in"><input type="number" inputmode="numeric" min="0" max="9999" id="logKcal" placeholder="–" value="'+(p.kcal||'')+'"><span class="u">kcal</span></div></div>'+
+    '</div></div>';
+  $('logTime').onchange=()=>{ p.time = Math.max(0, parseInt($('logTime').value)||0); save(); };
+  $('logKcal').onchange=()=>{ p.kcal = Math.max(0, parseInt($('logKcal').value)||0); save(); };
+
+  /* done button */
+  const allSb = sbDef.ex.every((ex,xi)=> (p.sb[xi]||[]).filter(Boolean).length >= ex.sets);
+  const allKb = moves.every((m,mi)=> (p.kb[mi]||0) >= m[1]);
+  const btn = $('doneBtn');
+  btn.classList.toggle('was', isDone);
+  btn.classList.toggle('ready', !isDone && allSb && allKb);
+  btn.textContent = isDone ? '✓ DAY COMPLETE — TAP TO UNDO' : 'MARK DAY COMPLETE';
+
+  /* wire set buttons */
+  document.querySelectorAll('[data-sb]').forEach(b=>{
+    b.onclick=()=>{
+      const [xi,si] = b.dataset.sb.split('-').map(Number);
+      const arr = p.sb[xi] || (p.sb[xi]=[]);
+      arr[si] = !arr[si];
+      if(arr[si]){ vib(30); startTimer(+b.dataset.rest, 'Rest · next set'); }
+      save(); renderToday();
+    };
+  });
+  document.querySelectorAll('[data-kb]').forEach(b=>{
+    b.onclick=()=>{
+      const mi=+b.dataset.kb, add=+b.dataset.add;
+      p.kb[mi] = Math.max(0,(p.kb[mi]||0)+add);
+      vib(15); save(); renderToday();
+    };
+  });
+  document.querySelectorAll('[data-w]').forEach(inp=>{
+    inp.onchange=()=>{
+      const v = parseFloat(inp.value);
+      if(v>0){ S.weights[inp.dataset.w] = v; save(); }
+    };
+  });
+}
+$('doneBtn').onclick=()=>{
+  const n = S.cur;
+  if(S.done.includes(n)){ S.done = S.done.filter(d=>d!==n); }
+  else{
+    S.done.push(n); vib([40,60,40]);
+    toast(n===30 ? 'VALHALLA. Program complete.' : 'Day '+n+' conquered');
+    const next = DAYS.find(d=>!S.done.includes(d[0]));
+    if(next) S.cur = next[0];
+  }
+  save(); renderToday(); renderDays();
+};
+$('prevDay').onclick=()=>{ if(S.cur>1){S.cur--; save(); renderToday();} };
+$('nextDay').onclick=()=>{ if(S.cur<30){S.cur++; save(); renderToday();} };
+
+/* ============ RENDER: DAYS ============ */
+function renderDays(){
+  let tm=0, kc=0;
+  S.done.forEach(d=>{ const q=S.prog[d]; if(q){ tm+=q.time||0; kc+=q.kcal||0; } });
+  let h = '<div class="statbar">'+
+    '<div class="stat"><b>'+S.done.length+'/30</b><span>days</span></div>'+
+    '<div class="stat"><b>'+tm.toLocaleString()+'</b><span>min total</span></div>'+
+    '<div class="stat"><b>'+kc.toLocaleString()+'</b><span>kcal total</span></div></div>';
+  for(let w=0;w<10;w++){
+    h += '<div class="weekh"><span class="wn">Week '+String(w+1).padStart(2,'0')+'</span><span class="wl"></span></div><div class="dgrid">';
+    DAYS.slice(w*3,w*3+3).forEach(([num,name,sess])=>{
+      const cls = (S.done.includes(num)?' done':'') + (num===S.cur?' cur':'');
+      h += '<button class="dcell'+cls+'" data-day="'+num+'">'+
+           '<span class="dot s'+sess.toLowerCase()+'"></span>'+
+           '<div class="dn">Day '+String(num).padStart(2,'0')+'</div><div class="nm">'+name+'</div></button>';
+    });
+    h += '</div>';
+  }
+  $('daysWrap').innerHTML = h;
+  document.querySelectorAll('[data-day]').forEach(b=>{
+    b.onclick=()=>{ S.cur=+b.dataset.day; save(); renderToday(); switchView('today'); };
+  });
+}
+
+/* ============ RENDER: GUIDE ============ */
+function renderGuide(){
+  let t='<tr><th>Movement</th><th>L</th><th>M</th><th>H</th></tr>';
+  Object.entries(KG).forEach(([n,w])=>{
+    t += '<tr><td>'+n+'</td><td>'+w[0]+'</td><td>'+w[1]+'</td><td class="hv">'+w[2]+'</td></tr>';
+  });
+  $('wtTable').innerHTML = t;
+  const cur = phaseOf(Math.min(30, Math.max(1, S.done.length+1)));
+  $('phaseList').innerHTML = PHASES.map(p=>
+    '<div class="phrow'+(p===cur?' now':'')+'"><span class="pk">'+p[0]+'</span><p>'+p[1]+' — '+p[2]+'</p></div>').join('');
+  $('vidList').innerHTML = VIDS.map(v=>
+    '<a class="vid" href="'+v[1]+'" target="_blank" rel="noopener"><span class="vn">'+v[0]+
+    (v[2]?' <span style="color:var(--bronze)">●</span>':'')+
+    '</span><span class="vp'+(v[2]?'':' inprog')+'">Watch ›</span></a>').join('') +
+    '<p style="font-size:11px;color:var(--dim);margin-top:12px">● in your program</p>';
+}
+$('resetBtn').onclick=()=>{
+  if(!confirm('Reset all progress? This clears every completed day and set.')) return;
+  S={cur:1,done:[],prog:{},weights:{}};
+  if(hasClaudeStore){ try{ window.storage.set(KEY, JSON.stringify(S)); }catch(e){} }
+  if(hasLocal){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+  renderToday(); renderDays(); renderGuide(); toast('Progress reset');
+};
+
+/* ============ NAV ============ */
+function switchView(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  $('v-'+v).classList.add('on');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  if(v==='days') renderDays();
+  if(v==='guide') renderGuide();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('.nav button').forEach(b=>{ b.onclick=()=>switchView(b.dataset.v); });
+
+/* ============ INIT ============ */
+(async function(){
+  await load();
+  S.done = S.done||[]; S.prog = S.prog||{}; S.weights = S.weights||{};
+  if(!S.done.includes(S.cur)){ /* keep */ }
+  renderToday(); renderDays(); renderGuide();
+})();
+</script>
+</body>
+</html>
