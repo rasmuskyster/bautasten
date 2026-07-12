@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Holiday Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1316; --ink:#dde8ec; --muted:#8fa3ab; --dim:#5f7079;
+  --line:rgba(120,170,190,0.16); --line2:rgba(120,170,190,0.30);
+  --surface:#141a1e; --surface2:#1a2227;
+  --teal:#79b4c4; --teal2:#9dd0dd; --sand:#d9b271;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{min-height:100%}
+body{
+  min-height:100%; background:var(--bg); color:var(--ink);
+  font-family:'Sora',system-ui,sans-serif; line-height:1.55; font-weight:400;
+  background-image:radial-gradient(ellipse 90% 40% at 50% -5%, rgba(120,170,190,0.10), transparent 60%);
+  background-repeat:no-repeat;
+  padding:0 16px calc(40px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:560px;margin:0 auto}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit}
+
+.hero{padding:40px 2px 8px}
+.kicker{font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--teal);font-weight:500}
+.hero h1{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(32px,8.5vw,50px);letter-spacing:0.02em;margin:12px 0 8px;line-height:1.05}
+.hero p{font-size:13.5px;color:var(--muted);font-weight:300}
+.meta{display:flex;border:1px solid var(--line);border-radius:100px;overflow:hidden;background:rgba(0,0,0,0.2);margin:20px 0 6px;width:fit-content}
+.meta span{padding:9px 15px;font-size:12px;color:var(--muted);border-right:1px solid var(--line)}
+.meta span:last-child{border-right:none}
+.meta b{color:var(--ink);font-weight:500}
+
+/* session tabs */
+.tabs{display:flex;gap:8px;margin:20px 0 4px}
+.tabs button{flex:1;padding:11px 6px;border:1px solid var(--line);border-radius:12px;font-size:13px;font-weight:500;color:var(--muted)}
+.tabs button.on{background:var(--teal);color:#0d1214;border-color:var(--teal)}
+.subline{font-size:12px;color:var(--dim);margin:12px 2px 14px;text-align:center;letter-spacing:0.02em}
+
+.prog{display:flex;align-items:center;gap:12px;margin:0 2px 20px}
+.prog .bar{flex:1;height:7px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.prog .fill{height:100%;width:0;border-radius:4px;background:var(--teal);transition:width .35s ease}
+.prog .lab{font-size:12px;color:var(--muted);min-width:54px;text-align:right}
+.prog .lab b{color:var(--ink);font-weight:600}
+
+.blkh{display:flex;align-items:center;gap:9px;margin:18px 2px 9px}
+.blkh .bt{font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal)}
+.blkh .bl{flex:1;height:1px;background:var(--line)}
+.tageq{font-size:10px;font-weight:600;letter-spacing:0.05em;padding:2px 8px;border-radius:6px}
+.eq-bw{background:rgba(120,170,190,0.16);color:var(--teal2)}
+.eq-bd{background:rgba(217,178,113,0.16);color:var(--sand)}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:14px 15px;margin-bottom:10px;position:relative;overflow:hidden}
+.ex::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line2)}
+.ex.bd::before{background:var(--sand)}
+.ex.done{opacity:0.5}
+.ex.done::before{background:var(--teal)}
+.shead{display:flex;align-items:flex-start;gap:12px}
+.tick{flex:none;width:30px;height:30px;border:1.5px solid var(--line2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--dim);margin-top:1px;transition:all .15s}
+.tick.on{background:var(--teal);border-color:var(--teal);color:#0d1214}
+.tick:active{transform:scale(0.9)}
+.sx{flex:1;min-width:0}
+.sx .nm{font-family:'Cinzel',serif;font-weight:600;font-size:15.5px}
+.sx .dose{font-size:12px;color:var(--teal2);font-weight:500;margin-top:3px}
+.sx .ds{font-size:12.5px;color:var(--muted);font-weight:300;margin-top:5px;line-height:1.5}
+.sx .cue{font-size:12px;color:var(--dim);margin-top:5px}
+
+.note{background:rgba(0,0,0,0.18);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:18px 0 8px}
+.note p{font-size:12.5px;color:var(--muted);font-weight:300;line-height:1.6}
+.note b{color:var(--ink);font-weight:500}
+.daily{display:flex;gap:9px;margin:8px 0}
+.daily div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.daily .di{font-size:19px}
+.daily .dn{font-family:'Cinzel',serif;font-size:12px;margin-top:4px;letter-spacing:0.02em}
+.daily .dd{font-size:10.5px;color:var(--dim);margin-top:2px}
+.resetrow{display:flex;justify-content:center;margin-top:16px}
+.reset{font-size:12px;color:var(--dim);border:1px solid var(--line);border-radius:100px;padding:9px 20px}
+.colophon{text-align:center;margin-top:24px;font-size:11px;color:var(--dim);letter-spacing:0.03em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Travel · maintenance</div>
+    <h1>Holiday Mode</h1>
+    <p>Two weeks off heavy loading is a deload, not a setback. Keep the patterns and some tension; come back rested, not behind. Bodyweight for legs, bands for the pull.</p>
+    <div class="meta"><span><b>25–30</b> min</span><span><b>3–4×</b> / fortnight</span><span><b>bands</b> + bodyweight</span></div>
+  </header>
+
+  <div class="tabs">
+    <button data-s="0" class="on">Session A</button>
+    <button data-s="1">Session B</button>
+    <button data-s="2">Daily</button>
+  </div>
+  <div class="subline" id="subline"></div>
+
+  <div class="prog" id="progWrap"><div class="bar"><div class="fill" id="fill"></div></div><div class="lab"><b id="cnt">0</b>/<span id="tot">0</span></div></div>
+
+  <div id="body"></div>
+
+  <div class="resetrow"><button class="reset" id="reset">Reset session checklist</button></div>
+  <div class="colophon">Companion to your Savage + Sandbag training</div>
+
+</div>
+
+<script>
+const SESS = [
+  {name:'Session A', focus:'quads · vertical push · pull', items:[
+    {b:'LEGS', eq:'bw', nm:'Tempo squats', dose:'3 × 12 · 3 s down, pause', ds:'Bodyweight squat lowered slowly with a pause at the bottom — the deep position from your flow, now loaded by time under tension.', cue:'The slow lowering is the work. Sit into the bottom.'},
+    {b:'LEGS', eq:'bw', nm:'Single-leg glute bridge', dose:'3 × 10 / side', ds:'On your back, one foot planted, drive the hip up. Your holiday hinge pattern.', cue:'Squeeze the glute at the top; keep hips level.'},
+    {b:'PUSH', eq:'bw', nm:'Push-ups', dose:'3 × near failure', ds:'Feet elevated on a chair for more load, or slow tempo if bodyweight is easy.', cue:'Full range, chest to near the floor; brace the trunk.'},
+    {b:'PUSH', eq:'band', nm:'Band overhead press', dose:'3 × 12', ds:'Stand on the band, press overhead — the vertical push your KB work usually covers.', cue:'Ribs down, don\u2019t arch the lower back to finish.'},
+    {b:'PULL', eq:'band', nm:'Band row', dose:'3 × 15', ds:'Anchor the band at waist height in a door; row to the ribs. The pattern a hotel room otherwise can\u2019t train.', cue:'Lead with the elbows; squeeze the shoulder blades.'},
+    {b:'CORE', eq:'bw', nm:'Hollow hold', dose:'3 × 20–30 s', ds:'On your back, lower back pressed down, legs and shoulders lifted. Anti-extension bracing.', cue:'If the lower back lifts, bend the knees or raise the legs higher.'}
+  ]},
+  {name:'Session B', focus:'single-leg · horizontal push · upper back', items:[
+    {b:'LEGS', eq:'bw', nm:'Bulgarian split squat', dose:'3 × 10 / side', ds:'Back foot on a chair, sink straight down. The hardest bodyweight leg movement you can travel with.', cue:'Front shin roughly vertical; control the descent.'},
+    {b:'LEGS', eq:'bw', nm:'Reverse lunge', dose:'3 × 10 / side', ds:'Step back and down, drive through the front heel to stand. Loads the legs unilaterally with balance.', cue:'Stay tall; don\u2019t let the front knee cave in.'},
+    {b:'PUSH', eq:'bw', nm:'Tempo push-ups', dose:'3 × near failure', ds:'Lower over 3 seconds, brief pause, press up. Higher tension than a normal push-up.', cue:'No sagging — the body stays a plank throughout.'},
+    {b:'PULL', eq:'band', nm:'Band pull-apart', dose:'3 × 20', ds:'Band at arm\u2019s length in front, pull it apart to the chest. Direct upper-back work.', cue:'Slow return; feel the shoulder blades draw together.'},
+    {b:'PULL', eq:'band', nm:'Band face pull', dose:'3 × 15', ds:'Anchor at head height, pull toward your face, elbows high. Rear delts and posture.', cue:'Lead with the elbows out and up.'},
+    {b:'CORE', eq:'band', nm:'Suitcase hold / Pallof', dose:'3 × 20 s / side', ds:'Band anchored at your side; resist it pulling you sideways. The anti-flexion bracing your carries train.', cue:'Stand tall and refuse to bend toward the band.'}
+  ]},
+  {name:'Daily', focus:'do these most days, no session needed', daily:true, items:[
+    {icon:'\uD83D\uDEB6', nm:'Walk', dd:'30–60 min easy'},
+    {icon:'\uD83E\uDDD8', nm:'Ground flow', dd:'your 9-piece warm-up'},
+    {icon:'\uD83E\uDDBE', nm:'Hang', dd:'20–30 s when you pass a bar'}
+  ]}
+];
+
+const KEY='holiday-done';
+let store = load();
+let cur = 0;
+
+function load(){ try{ const r=localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){} return {0:[],1:[]}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+
+function render(){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', +b.dataset.s===cur));
+  const s = SESS[cur];
+  document.getElementById('subline').textContent = s.focus;
+
+  if(s.daily){
+    document.getElementById('progWrap').style.display='none';
+    document.getElementById('reset').style.display='none';
+    document.getElementById('body').innerHTML =
+      '<div class="daily">'+s.items.map(d=>'<div><div class="di">'+d.icon+'</div><div class="dn">'+d.nm+'</div><div class="dd">'+d.dd+'</div></div>').join('')+'</div>'+
+      '<div class="note"><p><b>These are the real engine.</b> Two loaded sessions a week keep the muscle; the daily walking does the recomposition and the hang keeps your shoulders happy on planes and strange beds. Don\u2019t skip them for the sessions — it\u2019s the other way round.</p></div>';
+    return;
+  }
+  document.getElementById('progWrap').style.display='flex';
+  document.getElementById('reset').style.display='block';
+
+  const done = store[cur]||[];
+  let html='', lastB='';
+  s.items.forEach((it,i)=>{
+    if(it.b!==lastB){ html+='<div class="blkh"><span class="bt">'+it.b+'</span><span class="bl"></span></div>'; lastB=it.b; }
+    const on=done.includes(i);
+    html+='<div class="ex '+(it.eq==='band'?'bd':'')+(on?' done':'')+'">'+
+      '<div class="shead"><button class="tick'+(on?' on':'')+'" data-i="'+i+'" aria-label="Mark done">'+(on?'\u2713':'')+'</button>'+
+      '<div class="sx"><div class="nm">'+it.nm+' <span class="tageq '+(it.eq==='band'?'eq-bd':'eq-bw')+'">'+(it.eq==='band'?'band':'bodyweight')+'</span></div>'+
+      '<div class="dose">'+it.dose+'</div><div class="ds">'+it.ds+'</div><div class="cue">'+it.cue+'</div>'+
+      '</div></div></div>';
+  });
+  document.getElementById('body').innerHTML = html;
+
+  document.getElementById('cnt').textContent = done.length;
+  document.getElementById('tot').textContent = s.items.length;
+  document.getElementById('fill').style.width = (done.length/s.items.length*100)+'%';
+
+  document.querySelectorAll('.tick').forEach(b=>{
+    b.onclick=()=>{
+      const i=+b.dataset.i; const arr=store[cur]||(store[cur]=[]);
+      const p=arr.indexOf(i); if(p>=0) arr.splice(p,1); else arr.push(i);
+      if(navigator.vibrate) navigator.vibrate(18);
+      save(); render();
+    };
+  });
+}
+document.querySelectorAll('.tabs button').forEach(b=>{ b.onclick=()=>{ cur=+b.dataset.s; render(); window.scrollTo({top:0}); }; });
+document.getElementById('reset').onclick=()=>{ store[cur]=[]; save(); render(); };
+render();
+</script>
+</body>
+</html>
